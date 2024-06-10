@@ -32,16 +32,28 @@ local plugins = {
         event = { "BufEnter" },
     },
 
-    -- Nvim-Tree
+    -- NeoTree
     {
-        "nvim-tree/nvim-tree.lua",
-        keys = { "<leader>e" },
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-        config = function()
-            require("config.nvimtree").setup {}
-        end,
-        cmd = { "NvimTreeToggle", "NvimTreeOpen", "NvimTreeFocus", "NvimTreeFindFileToggle" },
-        event = "User DirOpened",
+        'nvim-neo-tree/neo-tree.nvim',
+        version = '*',
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+            'MunifTanjim/nui.nvim',
+        },
+        cmd = 'Neotree',
+        keys = {
+            { '\\', ':Neotree reveal<CR>', { desc = 'NeoTree reveal' } },
+        },
+        opts = {
+            filesystem = {
+                window = {
+                    mappings = {
+                        ['\\'] = 'close_window',
+                    },
+                },
+            },
+        },
     },
 
     -- Treesitter
@@ -70,13 +82,15 @@ local plugins = {
     -- Telescope
     {
         "nvim-telescope/telescope.nvim",
-        -- config = function()
-        --     require("config.telescope").setup()
-        -- end,
-        dependencies = { 'nvim-lua/plenary.nvim' },
-        -- dependencies = { "telescope-fzf-native.nvim" },
-        lazy = true,
-        cmd = "Telescope",
+        config = function()
+            require("config.telescope").setup({})
+        end,
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            'nvim-telescope/telescope-fzf-native.nvim',
+            'nvim-telescope/telescope-ui-select.nvim',
+        },
+        event = "VimEnter"
     },
 
     -- Git
@@ -94,35 +108,18 @@ local plugins = {
     -- LSP
     {
         "neovim/nvim-lspconfig",
-        lazy = true,
-        dependencies = { "mason-lspconfig.nvim", "nlsp-settings.nvim" },
-    },
-    {
-        "williamboman/mason-lspconfig.nvim",
-        cmd = { "LspInstall", "LspUninstall" },
+        dependencies = {
+            { "williamboman/mason.nvim", config = true },
+            'williamboman/mason-lspconfig.nvim',
+            'WhoIsSethDaniel/mason-tool-installer.nvim',
+            { 'j-hui/fidget.nvim',       opts = {} },
+            { 'folke/neodev.nvim',       opts = {} },
+        },
         config = function()
-            require("mason-lspconfig").setup {}
-        end,
-        lazy = true,
-        event = "User FileOpened",
-        dependencies = "mason.nvim",
+            require("config.lsp").setup({})
+        end
     },
-    { "tamago324/nlsp-settings.nvim", cmd = "LspSettings", lazy = true },
-    { "nvimtools/none-ls.nvim",       lazy = true },
-    {
-        "williamboman/mason.nvim",
-        config = function()
-            require("config.mason").setup {}
-        end,
-        cmd = { "Mason", "MasonInstall", "MasonUninstall", "MasonUninstallAll", "MasonLog" },
-        build = function()
-            pcall(function()
-                require("mason-registry").refresh()
-            end)
-        end,
-        event = "User FileOpened",
-        lazy = true,
-    },
+    { "nvimtools/none-ls.nvim",   lazy = true },
 
     -- CMP
     {

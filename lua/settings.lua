@@ -15,6 +15,20 @@ vim.opt.scrolloff = 8
 
 vim.opt.clipboard = "unnamedplus"
 
+vim.opt.showmode = false
+
+vim.opt.breakindent = true
+vim.opt.undofile = true
+
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.hlsearch = true
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
+vim.opt.signcolumn = 'yes'
+
+vim.opt.inccommand = 'split'
+
 local default_diagnostic_config = {
     signs = {
         active = true,
