@@ -17,8 +17,10 @@ function treesitter:setup()
             "cmake",
             "bash",
             "kotlin",
-            "python"
         },
+        sync_install = false,
+        ignore_install = {},
+        modules = {},
         auto_install = false,
         highlight = {
             enable = true,

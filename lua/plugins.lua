@@ -140,6 +140,7 @@ local plugins = {
             require("luasnip.loaders.from_vscode").lazy_load {}
             require("luasnip.loaders.from_snipmate").lazy_load {}
         end,
+        lazy = true,
     },
     {
         "hrsh7th/nvim-cmp",
