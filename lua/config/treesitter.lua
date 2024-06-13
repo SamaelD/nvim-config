@@ -1,6 +1,7 @@
 local treesitter = {}
 
 function treesitter:setup()
+    require('nvim-treesitter.install').prefer_git = true
     require("nvim-treesitter.configs").setup {
         ensure_installed = {
             "python",

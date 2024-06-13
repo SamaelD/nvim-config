@@ -11,12 +11,12 @@ function bl:setup()
             auto_toggle_bufferline = true,
             move_wraps_at_ends = false,
             groups = { items = {}, options = { toggle_hidden_on_enter = true } },
-            mode = "buffers", -- set to "tabs" to only show tabpages instead
-            numbers = "none", -- can be "none" | "ordinal" | "buffer_id" | "both" | function
+            mode = "buffers",                        -- set to "tabs" to only show tabpages instead
+            numbers = "none",                        -- can be "none" | "ordinal" | "buffer_id" | "both" | function
             close_command = "bdelete! %d",
             right_mouse_command = "vert sbuffer %d", -- can be a string | function, see "Mouse actions"
-            left_mouse_command = "buffer %d", -- can be a string | function, see "Mouse actions"
-            middle_mouse_command = nil, -- can be a string | function, see "Mouse actions"
+            left_mouse_command = "buffer %d",        -- can be a string | function, see "Mouse actions"
+            middle_mouse_command = nil,              -- can be a string | function, see "Mouse actions"
             indicator = {
                 icon = "▎",
                 style = "icon", -- can also be 'underline'|'none',
@@ -25,7 +25,7 @@ function bl:setup()
             modified_icon = " ",
             close_icon = "",
             left_trunc_marker = "",
-            right_trunc_marker =  "",
+            right_trunc_marker = "",
             name_formatter = function(buf) -- buf contains a "name", "path" and "bufnr"
                 -- remove extension from markdown files for example
                 if buf.name:match "%.md" then
@@ -34,13 +34,10 @@ function bl:setup()
             end,
             max_name_length = 18,
             max_prefix_length = 15, -- prefix used when a buffer is de-duplicated
-            truncate_names = true, -- whether or not tab names should be truncated
+            truncate_names = true,  -- whether or not tab names should be truncated
             tab_size = 18,
             diagnostics = "nvim_lsp",
             diagnostics_update_in_insert = false,
-            diagnostics_indicator = diagnostics_indicator,
-            -- NOTE: this will be called a lot so don't do any heavy processing here
-            custom_filter = custom_filter,
             offsets = {
                 {
                     filetype = "undotree",

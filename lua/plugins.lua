@@ -10,7 +10,6 @@ local plugins = {
     },
     {
         "loctvl842/monokai-pro.nvim",
-        as = 'monokaipro',
         config = function()
             vim.cmd('colorscheme monokai-pro')
         end
@@ -47,6 +46,9 @@ local plugins = {
         },
         opts = {
             filesystem = {
+                follow_current_file = {
+                    enabled = true,
+                },
                 window = {
                     mappings = {
                         ['\\'] = 'close_window',
@@ -121,16 +123,23 @@ local plugins = {
     },
     { "nvimtools/none-ls.nvim",   lazy = true },
 
+    {
+        'simrat39/rust-tools.nvim',
+        config = function()
+            require("config.rust-tools").setup {}
+        end
+
+    },
+
     -- CMP
     {
         "L3MON4D3/LuaSnip",
+        build = "make install_jsregexp",
         config = function()
             require("luasnip.loaders.from_lua").lazy_load {}
             require("luasnip.loaders.from_vscode").lazy_load {}
             require("luasnip.loaders.from_snipmate").lazy_load {}
         end,
-        event = "InsertEnter",
-        lazy = true,
     },
     {
         "hrsh7th/nvim-cmp",
@@ -250,11 +259,6 @@ local plugins = {
     },
 
     {
-        'mrcjkb/rustaceanvim',
-        lazy = false,
-    },
-
-    {
         "folke/todo-comments.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
         opts = {}
@@ -262,6 +266,21 @@ local plugins = {
 
     {
         "preservim/tagbar"
+    },
+
+    {
+        "folke/flash.nvim",
+        event = "VeryLazy",
+        ---@type Flash.Config
+        opts = {},
+        -- stylua: ignore
+        keys = {
+            { "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
+            { "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
+            { "r",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
+            { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+            { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
+        },
     },
 
     {

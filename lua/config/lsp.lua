@@ -2,13 +2,8 @@ local _lsp = {}
 
 function _lsp.setup()
     vim.api.nvim_create_autocmd('LspAttach', {
-        group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
+        group = vim.api.nvim_create_augroup('lsp-attach', { clear = true }),
         callback = function(event)
-            -- NOTE: Remember that Lua is a real programming language, and as such it is possible
-            -- to define small helper and utility functions so you don't have to repeat yourself.
-            --
-            -- In this case, we create a function that lets us more easily define mappings specific
-            -- for LSP related items. It sets the mode, buffer and description for us each time.
             local map = function(keys, func, desc)
                 vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
             end
@@ -59,7 +54,7 @@ function _lsp.setup()
             -- When you move your cursor, the highlights will be cleared (the second autocommand).
             local client = vim.lsp.get_client_by_id(event.data.client_id)
             if client and client.server_capabilities.documentHighlightProvider then
-                local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
+                local highlight_augroup = vim.api.nvim_create_augroup('lsp-highlight', { clear = false })
                 vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
                     buffer = event.buf,
                     group = highlight_augroup,
@@ -73,10 +68,10 @@ function _lsp.setup()
                 })
 
                 vim.api.nvim_create_autocmd('LspDetach', {
-                    group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+                    group = vim.api.nvim_create_augroup('lsp-detach', { clear = true }),
                     callback = function(event2)
                         vim.lsp.buf.clear_references()
-                        vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
+                        vim.api.nvim_clear_autocmds { group = 'lsp-highlight', buffer = event2.buf }
                     end,
                 })
             end
@@ -110,8 +105,20 @@ function _lsp.setup()
     --  - settings (table): Override the default settings passed when initializing the server.
     --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
     local servers = {
-        clangd = {},
-        -- gopls = {},
+        clangd = {
+            filetypes = { "h", "c", "cpp", "cc", "objc", "objcpp" },
+            cmd = { "clangd", "--background-index" },
+            single_file_support = true,
+            root_dir = require('lspconfig').util.root_pattern(
+                '.clangd',
+                '.clang-tidy',
+                '.clang-format',
+                'compile_commands.json',
+                'compile_flags.txt',
+                'configure.ac',
+                '.git'
+            )
+        },
         pyright = {},
         rust_analyzer = {},
         cmake = {},

@@ -29,6 +29,15 @@ vim.opt.signcolumn = 'yes'
 
 vim.opt.inccommand = 'split'
 
+vim.opt.foldmethod = "expr" -- default is "normal"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+-- if this option is true and fold method option is other than normal, every time a document is opened everything will be folded.
+vim.opt.foldenable = false
+vim.opt.foldcolumn = "0"
+vim.opt.foldtext = ""
+vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 1
+
 local default_diagnostic_config = {
     signs = {
         active = true,
