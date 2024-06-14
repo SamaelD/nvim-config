@@ -13,3 +13,5 @@ au.enable_format_on_save({})
 au.setup({})
 
 require("mapping")
+-- TODO: check why it doesn't work for lazy.config
+require("config.telescope").setup {}

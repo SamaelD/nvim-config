@@ -84,9 +84,6 @@ local plugins = {
     -- Telescope
     {
         "nvim-telescope/telescope.nvim",
-        config = function()
-            require("config.telescope").setup({})
-        end,
         dependencies = {
             'nvim-lua/plenary.nvim',
             'nvim-telescope/telescope-fzf-native.nvim',
