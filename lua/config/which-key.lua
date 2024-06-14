@@ -1,18 +1,6 @@
 local wc = {}
 
 local mappings = {
-    t = {
-        name = "Terminal",
-        o = { "<cmd>ToggleTerm<cr>", "Open terminal" },
-    },
-    s = {
-        name = "Search",
-        f = { "<cmd>Telescope find_files<cr>", "Find files" },
-        t = { "<cmd>Telescope live_grep<cr>", "Text search" },
-        b = { "<cmd>Telescope buffers<cr>", "Find buffers" },
-        h = { "<cmd>Telescope help_tags<cr>", "Help tags" },
-    },
-    ["T"] = { "<cmd>TagbarToggle<cr>", "Tags" }
 }
 
 function wc:setup()
