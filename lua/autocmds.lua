@@ -9,8 +9,8 @@ function autocmds:enable_transparent_mode()
                 "SignColumn",
                 "NormalNC",
                 "TelescopeBorder",
-                "NvimTreeNormal",
-                "NvimTreeNormalNC",
+                "NeoTreeNormal",
+                "NeoTreeNormalNC",
                 "EndOfBuffer",
                 "MsgArea",
             }
