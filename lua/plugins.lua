@@ -198,21 +198,6 @@ local plugins = {
         end
     },
 
-    -- Terminal
-    {
-        "akinsho/toggleterm.nvim",
-        branch = "main",
-        config = true,
-        cmd = {
-            "ToggleTerm",
-            "TermExec",
-            "ToggleTermToggleAll",
-            "ToggleTermSendCurrentLine",
-            "ToggleTermSendVisualLines",
-            "ToggleTermSendVisualSelection",
-        },
-    },
-
     {
         "christoomey/vim-tmux-navigator",
         cmd = {
@@ -309,7 +294,35 @@ local plugins = {
         config = function()
             require("config.nvim-surround")
         end
-    }
+    },
+
+    {
+        "folke/noice.nvim",
+        config = function()
+            require("noice").setup({
+                -- add any options here
+                routes = {
+                    {
+                        filter = {
+                            event = 'msg_show',
+                            any = {
+                                { find = '%d+L, %d+B' },
+                                { find = '; after #%d+' },
+                                { find = '; before #%d+' },
+                                { find = '%d fewer lines' },
+                                { find = '%d more lines' },
+                            },
+                        },
+                        opts = { skip = true },
+                    }
+                },
+            })
+        end,
+        dependencies = {
+            "MunifTanjim/nui.nvim",
+            "rcarriga/nvim-notify",
+        }
+    },
 }
 
 return plugins
