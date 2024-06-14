@@ -323,6 +323,13 @@ local plugins = {
             "rcarriga/nvim-notify",
         }
     },
+
+    {
+        'rmagatti/goto-preview',
+        config = function()
+            require('config.goto-preview').setup({})
+        end
+    },
 }
 
 return plugins
