@@ -80,10 +80,8 @@ function _lsp.setup()
             -- code, if the language server you are using supports them
             --
             -- This may be unwanted, since they displace some of your code
-            if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
-                map('<leader>th', function()
-                    vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-                end, '[T]oggle Inlay [H]ints')
+            if client and client.server_capabilities.inlayHintProvider then
+                vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
             end
         end,
     })

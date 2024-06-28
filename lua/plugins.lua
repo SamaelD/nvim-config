@@ -1,35 +1,9 @@
 local plugins = {
     { "folke/lazy.nvim",       tag = "stable" },
-    -- notification plugin
-    {
-        "rcarriga/nvim-notify",
-        lazy = false,
-        config = function()
-            require("config.nvim-notify")
-        end,
-    },
-    {
-        "loctvl842/monokai-pro.nvim",
-        config = function()
-            vim.cmd('colorscheme monokai-pro')
-        end
-    },
 
-    -- status line and buffer line
-    {
-        'nvim-lualine/lualine.nvim',
-        dependencies = { 'nvim-tree/nvim-web-devicons' },
-        config = function()
-            require("config.lualine").setup {}
-        end
-    },
-    {
-        "akinsho/bufferline.nvim",
-        config = function()
-            require("config.bufferline").setup {}
-        end,
-        event = { "BufEnter" },
-    },
+    require "plugins.notify",
+    require "plugins.theme",
+    require "plugins.statusline",
 
     -- NeoTree
     {
@@ -61,10 +35,8 @@ local plugins = {
     -- Treesitter
     {
         "nvim-treesitter/nvim-treesitter",
+        build = ':TSUpdate',
         config = function()
-            local global = require("global")
-            local path = global:get_runtime_dir() .. "site/pack/lazy/opt/nvim-treesitter"
-            vim.opt.rtp:prepend(path) -- treesitter needs to be before nvim's runtime in rtp
             require("config.treesitter").setup {}
         end,
         cmd = {
@@ -77,6 +49,10 @@ local plugins = {
             "TSInstallFromGrammar",
         },
         event = "User FileOpened",
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter-context",
+            "nvim-treesitter/nvim-treesitter-textobjects",
+        }
     },
 
     { "nvim-lua/plenary.nvim", cmd = { "PlenaryBustedFile", "PlenaryBustedDirectory" }, lazy = true },
@@ -93,16 +69,7 @@ local plugins = {
     },
 
     -- Git
-    {
-        "rbong/vim-flog",
-        cmd = { "Flog" }
-    },
-    {
-        "lewis6991/gitsigns.nvim",
-        config = function()
-            require("config.gitsigns").setup {}
-        end,
-    },
+    require "plugins.git",
 
     -- LSP
     {
@@ -128,17 +95,8 @@ local plugins = {
 
     },
 
+    require "plugins.snip",
     -- CMP
-    {
-        "L3MON4D3/LuaSnip",
-        build = "make install_jsregexp",
-        config = function()
-            require("luasnip.loaders.from_lua").lazy_load {}
-            require("luasnip.loaders.from_vscode").lazy_load {}
-            require("luasnip.loaders.from_snipmate").lazy_load {}
-        end,
-        lazy = true,
-    },
     {
         "hrsh7th/nvim-cmp",
         config = function()
@@ -291,34 +249,6 @@ local plugins = {
         config = function()
             require("config.nvim-surround")
         end
-    },
-
-    {
-        "folke/noice.nvim",
-        config = function()
-            require("noice").setup({
-                -- add any options here
-                routes = {
-                    {
-                        filter = {
-                            event = 'msg_show',
-                            any = {
-                                { find = '%d+L, %d+B' },
-                                { find = '; after #%d+' },
-                                { find = '; before #%d+' },
-                                { find = '%d fewer lines' },
-                                { find = '%d more lines' },
-                            },
-                        },
-                        opts = { skip = true },
-                    }
-                },
-            })
-        end,
-        dependencies = {
-            "MunifTanjim/nui.nvim",
-            "rcarriga/nvim-notify",
-        }
     },
 
     {
