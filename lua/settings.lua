@@ -23,11 +23,11 @@ vim.opt.undofile = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.hlsearch = true
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
-vim.opt.signcolumn = 'yes'
+vim.opt.signcolumn = "yes"
 
-vim.opt.inccommand = 'split'
+vim.opt.inccommand = "split"
 
 vim.opt.foldmethod = "expr" -- default is "normal"
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"

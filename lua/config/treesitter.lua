@@ -67,6 +67,7 @@ function treesitter:setup()
             max_file_lines = nil,
         },
     }
+    require 'treesitter-context'.setup {}
 end
 
 return treesitter
