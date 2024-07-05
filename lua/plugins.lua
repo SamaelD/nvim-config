@@ -297,6 +297,13 @@ local plugins = {
         end,
         lazy = false,
     },
+
+    {
+        "liangxianzhe/nap.nvim",
+        config = function()
+            require("nap").setup({})
+        end,
+    },
 }
 
 return plugins
