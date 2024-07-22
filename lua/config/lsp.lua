@@ -73,6 +73,7 @@ function _lsp.setup()
         pyright = {},
         rust_analyzer = {},
         cmake = {},
+        kotlin_language_server = {},
 
         lua_ls = {
             settings = {

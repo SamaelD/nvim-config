@@ -304,6 +304,31 @@ local plugins = {
             require("nap").setup({})
         end,
     },
+
+    {
+        'stevearc/oil.nvim',
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = function()
+            require "config/oil"
+        end,
+    },
+
+    {
+        "epwalsh/obsidian.nvim",
+        lazy = true,
+        ft = "markdown",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+        },
+        opts = {
+            workspaces = {
+                {
+                    name = "personal",
+                    path = "~/Documents/Obsidian Vault/",
+                },
+            },
+        },
+    }
 }
 
 return plugins
