@@ -58,17 +58,18 @@ function _lsp.setup()
 
     local servers = {
         clangd = {
-            filetypes = { "h", "hpp", "c", "cpp", "cc", "objc", "objcpp" },
-            cmd = { "clangd", "--background-index", "--clang-tidy" },
+            filetypes = { "h", "hpp", "cpp", "c", "cc" },
+            cmd = {
+                "clangd",
+                "--clang-tidy",
+                "--background-index",
+                "--completion-style=bundled",
+                "--header-insertion=iwyu",
+                "--enable-config", },
             single_file_support = true,
             root_dir = function()
                 vim.fn.getcwd()
             end,
-            settings = {
-                clangd = {
-                    compilationDatabasePath = "build",
-                },
-            },
         },
         pyright = {},
         rust_analyzer = {},

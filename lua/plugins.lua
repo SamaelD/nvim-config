@@ -328,7 +328,7 @@ local plugins = {
                 },
             },
         },
-    }
+    },
 }
 
 return plugins
