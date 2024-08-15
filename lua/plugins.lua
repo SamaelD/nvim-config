@@ -214,9 +214,7 @@ local plugins = {
         "nvimdev/dashboard-nvim",
         event = "VimEnter",
         config = function()
-            require("dashboard").setup({
-                -- config
-            })
+            require("config.dashboard").setup({})
         end,
         dependencies = { { "nvim-tree/nvim-web-devicons" } },
     },
@@ -329,6 +327,13 @@ local plugins = {
             },
         },
     },
+
+    {
+        "iamcco/markdown-preview.nvim",
+        cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+        ft = { "markdown" },
+        build = "cd app && yarn install",
+    }
 }
 
 return plugins
