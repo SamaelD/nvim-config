@@ -34,10 +34,21 @@ function _cmp:setup()
                 end
             end, { 'i', 's' }),
         },
+        formatting = {
+            format = require('lspkind').cmp_format({
+                mode = "symbol",
+                maxwidth = 50,
+                ellipsis_char = '...',
+                symbol_map = { Codeium = "", }
+            })
+        },
         sources = {
             { name = 'nvim_lsp' },
             { name = 'luasnip' },
             { name = 'path' },
+            { name = 'codeium' },
+            { name = 'cmdline' },
+            { name = 'buffer' }
         },
     }
 end

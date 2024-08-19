@@ -74,6 +74,7 @@ local plugins = {
             "nvim-lua/plenary.nvim",
             "nvim-telescope/telescope-fzf-native.nvim",
             "nvim-telescope/telescope-ui-select.nvim",
+            "nvim-telescope/telescope-live-grep-args.nvim",
         },
         event = "VimEnter",
     },
@@ -114,20 +115,12 @@ local plugins = {
         end,
         event = { "InsertEnter", "CmdlineEnter" },
         dependencies = {
-            "cmp-nvim-lsp",
-            "cmp_luasnip",
-            "cmp-buffer",
-            "cmp-path",
-            "cmp-cmdline",
+            "hrsh7th/cmp-nvim-lsp",
+            "saadparwaiz1/cmp_luasnip",
+            "hrsh7th/cmp-buffer",
+            "hrsh7th/cmp-path",
+            "hrsh7th/cmp-cmdline",
         },
-        lazy = true,
-    },
-    { "hrsh7th/cmp-nvim-lsp",     lazy = true },
-    { "saadparwaiz1/cmp_luasnip", lazy = true },
-    { "hrsh7th/cmp-buffer",       lazy = true },
-    { "hrsh7th/cmp-path",         lazy = true },
-    {
-        "hrsh7th/cmp-cmdline",
         lazy = true,
     },
 
@@ -333,7 +326,18 @@ local plugins = {
         cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
         ft = { "markdown" },
         build = "cd app && yarn install",
-    }
+    },
+
+    {
+        "onsails/lspkind.nvim"
+    },
+
+    {
+        "karb94/neoscroll.nvim",
+        config = function()
+            require('neoscroll').setup({})
+        end
+    },
 }
 
 return plugins
