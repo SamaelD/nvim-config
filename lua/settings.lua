@@ -40,6 +40,8 @@ vim.opt.foldlevelstart = 1
 
 vim.opt.cursorline = true
 
+vim.opt.mousemoveevent = true
+
 vim.opt.listchars = "eol:↵,trail:~,tab:>-,nbsp:␣"
 
 local default_diagnostic_config = {

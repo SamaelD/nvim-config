@@ -47,7 +47,7 @@ function _cmp:setup()
             { name = 'luasnip' },
             { name = 'path' },
             { name = 'codeium' },
-            { name = 'cmdline' },
+            -- { name = 'cmdline' },
             { name = 'buffer' }
         },
     }
