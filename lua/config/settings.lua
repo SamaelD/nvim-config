@@ -44,6 +44,7 @@ vim.opt.cursorline = true
 vim.opt.mousemoveevent = true
 
 vim.opt.listchars = "eol:↵,trail:~,tab:>-,nbsp:␣"
+vim.opt.fillchars = "eob: "
 
 local default_diagnostic_config = {
     signs = {
