@@ -91,7 +91,12 @@ return {
                     always_show_bufferline = false,
                     auto_toggle_bufferline = true,
                     separator_style = "thin"
-                }
+                },
+                highlights = {
+                    buffer_selected = {
+                        italic = true,
+                    }
+                },
             }
         end,
     },

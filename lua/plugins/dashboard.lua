@@ -1,5 +1,3 @@
-local _d = {}
-
 local function headers()
     local header1 = {
         '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
@@ -148,14 +146,19 @@ local function get_header()
     return _headers[number]
 end
 
-function _d:setup()
-    require("dashboard").setup({
-        config = {
-            header = get_header(),
-            shortcut = {},
-            footer = {},
-        }
-    })
-end
-
-return _d
+return {
+    {
+        "nvimdev/dashboard-nvim",
+        event = "VimEnter",
+        config = function()
+            require("dashboard").setup({
+                config = {
+                    header = get_header(),
+                    shortcut = {},
+                    footer = {},
+                }
+            })
+        end,
+        dependencies = { { "nvim-tree/nvim-web-devicons" } },
+    }
+}

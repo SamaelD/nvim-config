@@ -1,3 +1,5 @@
+vim.g.mapleader = " "
+
 vim.opt.number = true
 vim.opt.relativenumber = true
 
@@ -23,7 +25,6 @@ vim.opt.undofile = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.hlsearch = true
-vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 vim.opt.signcolumn = "yes"
 
