@@ -13,7 +13,12 @@ return {
                 defaults = {
                     file_ignore_patterns = {
                         '.git/'
-                    }
+                    },
+                    layout_strategy = 'flex',
+                    sorting_strategy = 'ascending',
+                    layout_config = {
+                        prompt_position = 'top',
+                    },
                 },
                 extensions = {
                     ['ui-select'] = {
@@ -22,12 +27,29 @@ return {
                     live_grep_args = {
                         auto_quoting = true, -- enable/disable auto-quoting
                     },
+                    fzf = {
+                        fuzzy = true,                   -- false will only do exact matching
+                        override_generic_sorter = true, -- override the generic sorter
+                        override_file_sorter = true,    -- override the file sorter
+                        case_mode = 'smart_case',       -- or "ignore_case" or "respect_case"
+                    },
                 },
                 pickers = {
                     find_files = {
                         hidden = true,
                     }
-                }
+                },
+                path_display = {
+                    filename_first = {
+                        reverse_directories = true,
+                    },
+                },
+                mappings = {
+                    n = {
+                        ["d"] = require("telescope.actions").delete_buffer,
+                        ["q"] = require("telescope.actions").close,
+                    },
+                },
             }
 
             -- Enable Telescope extensions if they are installed
@@ -48,7 +70,15 @@ return {
             vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
             vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
             vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-            vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+            vim.keymap.set('n', '<leader><leader>',
+                function()
+                    builtin.buffers({
+                        sort_mru = true,
+                        sort_lastused = true,
+                        initial_mode = 'normal',
+                    })
+                end,
+                { desc = '[ ] Find existing buffers' })
             vim.keymap.set('n', '<leader>tk', builtin.git_commits, { desc = 'Show git history' })
             vim.keymap.set('n', '<leader>k', builtin.git_bcommits, { desc = 'Show git history for an open file' })
 
