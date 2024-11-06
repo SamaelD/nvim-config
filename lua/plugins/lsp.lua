@@ -21,7 +21,11 @@ return {
                     map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
                     map("<leader>D", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
                     map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
-                    map("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+                    map(
+                        "<leader>ws",
+                        require("telescope.builtin").lsp_dynamic_workspace_symbols,
+                        "[W]orkspace [S]ymbols"
+                    )
                     map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
                     map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
                     map("<leader>hd", vim.lsp.buf.hover, "[H]over [D]ocumentation")
@@ -73,7 +77,8 @@ return {
                         "--background-index",
                         "--completion-style=bundled",
                         "--header-insertion=iwyu",
-                        "--enable-config", },
+                        "--enable-config",
+                    },
                     single_file_support = true,
                     root_dir = function()
                         vim.fn.getcwd()
@@ -90,7 +95,7 @@ return {
                             completion = {
                                 callSnippet = "Replace",
                             },
-                            diagnostics = { disable = { 'missing-fields' } },
+                            diagnostics = { disable = { "missing-fields" } },
                         },
                     },
                 },
@@ -113,9 +118,10 @@ return {
                     end,
                 },
             })
+            require("lspconfig").qmlls6.setup({})
         end,
     },
     { "nvimtools/none-ls.nvim",     lazy = true },
     { "jay-babu/mason-null-ls.nvim" },
-    { "onsails/lspkind.nvim" }
+    { "onsails/lspkind.nvim" },
 }
