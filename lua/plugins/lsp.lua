@@ -118,7 +118,7 @@ return {
                     end,
                 },
             })
-            require("lspconfig").qmlls6.setup({})
+            require("lspconfig").qmlls.setup({})
         end,
     },
     { "nvimtools/none-ls.nvim",     lazy = true },
