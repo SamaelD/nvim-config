@@ -1,3 +1,84 @@
+local previewers = require('telescope.previewers')
+local conf = require("telescope.config").values
+local utils = require('telescope.previewers.utils')
+
+local function defaulter(f, default_opts)
+    default_opts = default_opts or {}
+    return {
+        new = function(opts)
+            if conf.preview == false and not opts.preview then
+                return false
+            end
+            opts.preview = type(opts.preview) ~= "table" and {} or opts.preview
+            if type(conf.preview) == "table" then
+                for k, v in pairs(conf.preview) do
+                    opts.preview[k] = vim.F.if_nil(opts.preview[k], v)
+                end
+            end
+            return f(opts)
+        end,
+        __call = function()
+            local ok, err = pcall(f(default_opts))
+            if not ok then
+                error(debug.traceback(err))
+            end
+        end,
+    }
+end
+
+local function search_teardown(self)
+    if self.state and self.state.hl_id then
+        pcall(vim.fn.matchdelete, self.state.hl_id, self.state.hl_win)
+        self.state.hl_id = nil
+    end
+end
+
+local function search_cb_jump(self, bufnr, query)
+    if not query then
+        return
+    end
+    vim.api.nvim_buf_call(bufnr, function()
+        pcall(vim.fn.matchdelete, self.state.hl_id, self.state.winid)
+        vim.cmd "keepjumps norm! gg"
+        vim.fn.search(query, "W")
+        vim.cmd "norm! zz"
+
+        self.state.hl_id = vim.fn.matchadd("TelescopePreviewMatch", query)
+    end)
+end
+
+local diff_to_parent_previewer = defaulter(function(opts)
+    return previewers.new_buffer_previewer({
+        title = "Git Diff to Parent Preview",
+        teardown = search_teardown,
+
+        get_buffer_by_name = function(_, entry)
+            return entry.value
+        end,
+
+        define_preview = function(self, entry, status)
+            local cmd = { 'git', 'show', '--stat', '--patch', '--pretty=fuller',
+                entry.value .. "^!" }
+            if opts.current_file then
+                table.insert(cmd, '--')
+                table.insert(cmd, opts.current_file)
+            end
+
+            utils.job_maker(cmd, self.state.bufnr, {
+                value = entry.value,
+                bufname = self.state.bufname,
+                cwd = opts.cwd,
+                callback = function(bufnr)
+                    if vim.api.nvim_buf_is_valid(bufnr) then
+                        search_cb_jump(self, bufnr, opts.current_file)
+                        utils.highlighter(bufnr, "diff", opts)
+                    end
+                end
+            })
+        end
+    })
+end)
+
 return {
     {
         "nvim-telescope/telescope.nvim",
@@ -37,8 +118,10 @@ return {
                 pickers = {
                     find_files = {
                         hidden = true,
-                    }
+                    },
                 },
+                -- previewers = {
+                -- },
                 path_display = {
                     filename_first = {
                         reverse_directories = true,
@@ -51,6 +134,10 @@ return {
                     },
                 },
             }
+
+
+            previewers.git_commit_diff_to_parent = diff_to_parent_previewer
+
 
             -- Enable Telescope extensions if they are installed
             pcall(require('telescope').load_extension, 'fzf')
