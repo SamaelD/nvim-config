@@ -48,7 +48,6 @@ return {
                     { name = 'luasnip' },
                     { name = 'path' },
                     { name = 'codeium' },
-                    -- { name = 'cmdline' },
                     { name = 'buffer' }
                 },
             }
