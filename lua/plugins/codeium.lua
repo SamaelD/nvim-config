@@ -9,8 +9,8 @@ return {
             require("codeium").setup({
                 enable_chat = true,
                 virtual_text = {
-                    enabled = true
-                }
+                    enabled = true,
+                },
             })
         end,
     }
