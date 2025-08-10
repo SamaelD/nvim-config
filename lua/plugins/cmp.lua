@@ -1,6 +1,16 @@
 return {
     {
         "hrsh7th/nvim-cmp",
+        dependencies = {
+            "saadparwaiz1/cmp_luasnip",
+            'hrsh7th/cmp-nvim-lsp',
+            'hrsh7th/cmp-buffer',
+            'hrsh7th/cmp-path',
+            'hrsh7th/cmp-cmdline',
+            'hrsh7th/nvim-cmp',
+            'hrsh7th/cmp-vsnip',
+            'hrsh7th/vim-vsnip',
+        },
         config = function()
             local cmp = require 'cmp'
             local luasnip = require 'luasnip'
@@ -22,6 +32,7 @@ return {
                     if vim.tbl_contains(files, buffer) then
                         return false
                     end
+                    return true
                 end,
                 mapping = cmp.mapping.preset.insert {
                     ['<C-n>'] = cmp.mapping.select_next_item(),
@@ -32,7 +43,7 @@ return {
                     ['<CR>'] = cmp.mapping.confirm { select = true },
                     ['<Tab>'] = cmp.mapping.select_next_item(),
                     ['<S-Tab>'] = cmp.mapping.select_prev_item(),
-                    ['<C-Space>'] = cmp.mapping.complete(),
+                    ['<C-Space>'] = cmp.mapping.complete {},
                     -- <c-l> will move you to the right of each of the expansion locations.
                     -- <c-h> is similar, except moving you backwards.
                     ['<C-l>'] = cmp.mapping(function()
@@ -64,13 +75,6 @@ return {
             }
         end,
         event = { "InsertEnter", "CmdlineEnter" },
-        dependencies = {
-            "hrsh7th/cmp-nvim-lsp",
-            "saadparwaiz1/cmp_luasnip",
-            "hrsh7th/cmp-buffer",
-            "hrsh7th/cmp-path",
-            "hrsh7th/cmp-cmdline",
-        },
         lazy = true,
     },
 }
