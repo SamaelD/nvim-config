@@ -12,6 +12,17 @@ return {
                     end,
                 },
                 completion = { completeopt = 'menu,menuone,noinsert' },
+                enabled = function()
+                    local files = {
+                        "oil"
+                    }
+
+                    local buffer = vim.bo.filetype
+
+                    if vim.tbl_contains(files, buffer) then
+                        return false
+                    end
+                end,
                 mapping = cmp.mapping.preset.insert {
                     ['<C-n>'] = cmp.mapping.select_next_item(),
                     ['<C-p>'] = cmp.mapping.select_prev_item(),

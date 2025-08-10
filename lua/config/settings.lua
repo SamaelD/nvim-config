@@ -71,3 +71,4 @@ local default_diagnostic_config = {
 }
 
 vim.diagnostic.config(default_diagnostic_config)
+vim.lsp.inlay_hint.enable(true)

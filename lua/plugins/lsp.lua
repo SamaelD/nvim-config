@@ -70,12 +70,12 @@ return {
 
             local servers = {
                 clangd = {
-                    filetypes = { "h", "hpp", "cpp", "c", "cc" },
+                    filetypes = { "h", "hpp", "cpp", "c", "cc", "cppm" },
                     cmd = {
                         "clangd",
                         "--clang-tidy",
                         "--background-index",
-                        "--completion-style=bundled",
+                        "--completion-style=detailed",
                         "--header-insertion=iwyu",
                         "--enable-config",
                     },

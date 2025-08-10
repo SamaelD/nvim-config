@@ -87,9 +87,12 @@ return {
             "nvim-telescope/telescope-fzf-native.nvim",
             "nvim-telescope/telescope-ui-select.nvim",
             "nvim-telescope/telescope-live-grep-args.nvim",
+            "andrew-george/telescope-themes",
         },
         event = "VimEnter",
         config = function()
+            local builtin_schemes = require("telescope._extensions.themes").builtin_schemes
+
             require('telescope').setup {
                 defaults = {
                     file_ignore_patterns = {
@@ -106,13 +109,13 @@ return {
                         require('telescope.themes').get_dropdown(),
                     },
                     live_grep_args = {
-                        auto_quoting = true, -- enable/disable auto-quoting
+                        auto_quoting = true,
                     },
                     fzf = {
-                        fuzzy = true,                   -- false will only do exact matching
-                        override_generic_sorter = true, -- override the generic sorter
-                        override_file_sorter = true,    -- override the file sorter
-                        case_mode = 'smart_case',       -- or "ignore_case" or "respect_case"
+                        fuzzy = true,
+                        override_generic_sorter = true,
+                        override_file_sorter = true,
+                        case_mode = 'smart_case',
                     },
                 },
                 pickers = {
@@ -133,13 +136,31 @@ return {
                         ["q"] = require("telescope.actions").close,
                     },
                 },
-            }
+                themes = {
+                    layout_config = {
+                        horizontal = {
+                            width = 0.8,
+                            height = 0.7,
+                        },
+                    },
 
+                    enable_previewer = true,
+                    enable_live_preview = false,
+                    ignore = { "default", "desert", "elflord", "habamax" },
+                    dark_themes = {
+                        ignore = false,
+                        keywords = { "dark", "night", "black" }
+                    },
+                    mappings = {
+                        down = "<C-n>",
+                        up = "<C-p>",
+                        accept = "<C-y>",
+                    },
+                },
+            }
 
             previewers.git_commit_diff_to_parent = diff_to_parent_previewer
 
-
-            -- Enable Telescope extensions if they are installed
             pcall(require('telescope').load_extension, 'fzf')
             pcall(require('telescope').load_extension, 'ui-select')
             pcall(require('telescope').load_extension, 'live_grep_args')
@@ -170,7 +191,6 @@ return {
             vim.keymap.set('n', '<leader>tk', builtin.git_commits, { desc = 'Show git history' })
             vim.keymap.set('n', '<leader>k', builtin.git_bcommits, { desc = 'Show git history for an open file' })
 
-            -- Slightly advanced example of overriding default behavior and theme
             vim.keymap.set('n', '<leader>/', function()
                 -- You can pass additional configuration to Telescope to change the theme, layout, etc.
                 builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
@@ -179,8 +199,6 @@ return {
                 })
             end, { desc = '[/] Fuzzily search in current buffer' })
 
-            -- It's also possible to pass additional configuration options.
-            --  See `:help telescope.builtin.live_grep()` for information about particular keys
             vim.keymap.set('n', '<leader>s/', function()
                 builtin.live_grep {
                     grep_open_files = true,
@@ -188,7 +206,6 @@ return {
                 }
             end, { desc = '[S]earch [/] in Open Files' })
 
-            -- Shortcut for searching your Neovim configuration files
             vim.keymap.set('n', '<leader>sn', function()
                 builtin.find_files { cwd = vim.fn.stdpath 'config' }
             end, { desc = '[S]earch [N]eovim files' })
