@@ -63,6 +63,11 @@ return {
                     if client and client.name == "clangd" then
                         map("<leader>hs", "<cmd>ClangdSwitchSourceHeader<cr>", "[H]eader/[S]ource switch")
                     end
+
+                    if client.name == 'ruff' then
+                        -- Disable hover in favor of Pyright
+                        client.server_capabilities.hoverProvider = false
+                    end
                 end,
             })
 
@@ -120,6 +125,19 @@ return {
                 },
             })
             require("lspconfig").qmlls.setup({})
+            require("lspconfig").ruff.setup({
+                settings = {
+                    pyright = {
+                        disableOrganizeImports = true,
+                    },
+                    python = {
+                        analysis = {
+                            -- Ignore all files for analysis to exclusively use Ruff for linting
+                            ignore = { '*' },
+                        },
+                    },
+                },
+            })
         end,
     },
     { "nvimtools/none-ls.nvim",     lazy = true },

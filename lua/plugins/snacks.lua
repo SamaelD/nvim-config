@@ -148,17 +148,126 @@ end
 
 return {
     {
-        "nvimdev/dashboard-nvim",
-        event = "VimEnter",
-        config = function()
-            require("dashboard").setup({
-                config = {
+        "folke/snacks.nvim",
+        priority = 1000,
+        lazy = false,
+        opts = {
+            animate = { enabled = true },
+            bigfile = {
+                enabled = true,
+                notify = true,
+            },
+            -- TODO: header is not displayed
+            dashboard = {
+                enabled = true,
+                width = 100,
+                autokeys = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                preset = {
                     header = get_header(),
-                    shortcut = {},
-                    footer = {},
-                }
+                },
+                sections = {
+                    { section = "header" },
+                    { title = "󰏓 Recent Projects" },
+                    { section = "projects", padding = 1 },
+                    { title = " Most Recent Files" },
+                    { section = "recent_files", padding = 1 },
+                    {
+                        pane = 1,
+                        icon = " ",
+                        title = "Git Status",
+                        section = "terminal",
+                        enabled = function()
+                            return Snacks.git.get_root() ~= nil
+                        end,
+                        cmd = "git status --short --branch --renames",
+                        height = 5,
+                        padding = 1,
+                        ttl = 5 * 60,
+                        indent = 0,
+                    },
+                    { section = "startup" },
+                },
+            },
+            input = { enabled = true },
+            notifier = {
+                enabled = true,
+                timeout = 3000,
+                style = "fancy"
+            },
+            quickfile = { enabled = true },
+            scope = { enabled = true },
+            scroll = { enabled = true },
+            statuscolumn = { enabled = true },
+            toggle = { enabled = true },
+        },
+    },
+    {
+        "folke/noice.nvim",
+        config = function()
+            require("noice").setup({
+                -- add any options here
+                routes = {
+                    {
+                        filter = {
+                            event = 'msg_show',
+                            any = {
+                                { find = '%d+L, %d+B' },
+                                { find = '; after #%d+' },
+                                { find = '; before #%d+' },
+                                { find = '%d fewer lines' },
+                                { find = '%d more lines' },
+                            },
+                        },
+                        opts = { skip = true },
+                    }
+                },
             })
         end,
-        dependencies = { { "nvim-tree/nvim-web-devicons" } },
+        dependencies = {
+            "MunifTanjim/nui.nvim",
+            "rcarriga/nvim-notify",
+        }
+    },
+    {
+        "folke/todo-comments.nvim",
+        optional = true,
+        keys = {
+            {
+                "<leader>st",
+                function() Snacks.picker.todo_comments() end,
+                desc = "Todo"
+            },
+            {
+                "<leader>sT",
+                function()
+                    Snacks.picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME" } })
+                end,
+                desc = "Todo/Fix/Fixme"
+            },
+        },
+    },
+    {
+        "folke/trouble.nvim",
+        optional = true,
+        specs = {
+            "folke/snacks.nvim",
+            opts = function(_, opts)
+                return vim.tbl_deep_extend("force", opts or {}, {
+                    picker = {
+                        actions = require("trouble.sources.snacks").actions,
+                        win = {
+                            input = {
+                                keys = {
+                                    ["<c-t>"] = {
+                                        "trouble_open",
+                                        mode = { "n", "i" },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                })
+            end,
+        },
     }
 }

@@ -46,6 +46,8 @@ vim.opt.mousemoveevent = true
 vim.opt.listchars = "eol:↵,trail:~,tab:>-,nbsp:␣"
 vim.opt.fillchars = "eob: "
 
+vim.opt.laststatus = 3
+
 local default_diagnostic_config = {
     signs = {
         active = true,

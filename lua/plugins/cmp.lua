@@ -1,6 +1,9 @@
 return {
     {
         "hrsh7th/nvim-cmp",
+        version = false,
+        event = { "InsertEnter", "CmdlineEnter" },
+        lazy = true,
         dependencies = {
             "saadparwaiz1/cmp_luasnip",
             'hrsh7th/cmp-nvim-lsp',
@@ -11,11 +14,13 @@ return {
             'hrsh7th/cmp-vsnip',
             'hrsh7th/vim-vsnip',
         },
-        config = function()
+        opts = function()
             local cmp = require 'cmp'
             local luasnip = require 'luasnip'
 
-            cmp.setup {
+            vim.api.nvim_set_hl(0, "CmpGhostText", { link = "Comment", default = true })
+
+            return {
                 snippet = {
                     expand = function(args)
                         luasnip.lsp_expand(args.body)
@@ -35,17 +40,29 @@ return {
                     return true
                 end,
                 mapping = cmp.mapping.preset.insert {
-                    ['<C-n>'] = cmp.mapping.select_next_item(),
-                    ['<C-p>'] = cmp.mapping.select_prev_item(),
+                    ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+                    ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
                     ['<C-b>'] = cmp.mapping.scroll_docs(-4),
                     ['<C-f>'] = cmp.mapping.scroll_docs(4),
                     ['<C-y>'] = cmp.mapping.confirm { select = true },
                     ['<CR>'] = cmp.mapping.confirm { select = true },
-                    ['<Tab>'] = cmp.mapping.select_next_item(),
+                    ['<Tab>'] = function(fallback)
+                        if vim.snippet.active({ direction = 1 }) then
+                            vim.schedule(function()
+                                vim.snippet.jump(1)
+                            end)
+                        elseif require("codeium.virtual_text").get_current_completion_item() then
+                            if vim.api.nvim_get_mode().mode == "i" then
+                                local undo = vim.api.nvim_replace_termcodes("<c-G>u", true, true, true)
+                                vim.api.nvim_feedkeys(undo, "n", false)
+                            end
+                            vim.api.nvim_input(require("codeium.virtual_text").accept())
+                        elseif type(fallback) == "function" then
+                            fallback()
+                        end
+                    end,
                     ['<S-Tab>'] = cmp.mapping.select_prev_item(),
                     ['<C-Space>'] = cmp.mapping.complete {},
-                    -- <c-l> will move you to the right of each of the expansion locations.
-                    -- <c-h> is similar, except moving you backwards.
                     ['<C-l>'] = cmp.mapping(function()
                         if luasnip.expand_or_locally_jumpable() then
                             luasnip.expand_or_jump()
@@ -62,7 +79,14 @@ return {
                         mode = "symbol",
                         maxwidth = 50,
                         ellipsis_char = '...',
-                        symbol_map = { Codeium = "", }
+                        symbol_map = { Codeium = " ", },
+
+                        before = function(entry, item)
+                            if entry.source.name == "cmp_tabnine" then
+                                item.menu = ""
+                            end
+                            return item
+                        end,
                     })
                 },
                 sources = {
@@ -70,11 +94,25 @@ return {
                     { name = 'luasnip' },
                     { name = 'path' },
                     { name = 'codeium' },
-                    { name = 'buffer' }
+                    { name = 'buffer' },
+                    { name = 'snacks' },
+                    {
+                        name = 'codeium',
+                        group_index = 1,
+                        priority = 100
+                    },
+                    {
+                        name = "cmp_tabnine",
+                        group_index = 1,
+                        priority = 100,
+                    }
+                },
+                experimental = {
+                    ghost_text = {
+                        hl_group = "CmpGhostText",
+                    }
                 },
             }
         end,
-        event = { "InsertEnter", "CmdlineEnter" },
-        lazy = true,
     },
 }

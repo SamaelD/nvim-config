@@ -6,7 +6,7 @@ return {
             require('lualine').setup {
                 options = {
                     icons_enabled = true,
-                    theme = 'auto',
+                    theme = 'catppuccin',
                     component_separators = { left = '', right = '' },
                     section_separators = { left = '', right = '' },
                     disabled_filetypes = {
@@ -25,7 +25,7 @@ return {
                 sections = {
                     lualine_a = { 'mode' },
                     lualine_b = { 'branch', 'diff', 'diagnostics' },
-                    lualine_c = { { 'filename', path = 1 } },
+                    lualine_c = { function() return ' ' end, { 'filename', path = 1 } },
                     lualine_x = { 'encoding', 'fileformat', 'filetype' },
                     lualine_y = { 'progress' },
                     lualine_z = { 'location' }
@@ -35,7 +35,7 @@ return {
                     lualine_b = {},
                     lualine_c = { 'filename' },
                     lualine_x = { 'location' },
-                    lualine_y = {},
+                    lualine_y = { '' },
                     lualine_z = {}
                 },
                 tabline = {},
@@ -92,11 +92,9 @@ return {
                     auto_toggle_bufferline = true,
                     separator_style = "thin"
                 },
-                highlights = {
-                    buffer_selected = {
-                        italic = true,
-                    }
-                },
+                highlights = require("catppuccin.groups.integrations.bufferline").get {
+                    styles = { "italic" },
+                }
             }
         end,
     },

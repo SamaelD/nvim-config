@@ -87,12 +87,9 @@ return {
             "nvim-telescope/telescope-fzf-native.nvim",
             "nvim-telescope/telescope-ui-select.nvim",
             "nvim-telescope/telescope-live-grep-args.nvim",
-            "andrew-george/telescope-themes",
         },
         event = "VimEnter",
         config = function()
-            local builtin_schemes = require("telescope._extensions.themes").builtin_schemes
-
             require('telescope').setup {
                 defaults = {
                     file_ignore_patterns = {
@@ -136,27 +133,6 @@ return {
                         ["q"] = require("telescope.actions").close,
                     },
                 },
-                themes = {
-                    layout_config = {
-                        horizontal = {
-                            width = 0.8,
-                            height = 0.7,
-                        },
-                    },
-
-                    enable_previewer = true,
-                    enable_live_preview = false,
-                    ignore = { "default", "desert", "elflord", "habamax" },
-                    dark_themes = {
-                        ignore = false,
-                        keywords = { "dark", "night", "black" }
-                    },
-                    mappings = {
-                        down = "<C-n>",
-                        up = "<C-p>",
-                        accept = "<C-y>",
-                    },
-                },
             }
 
             previewers.git_commit_diff_to_parent = diff_to_parent_previewer
@@ -192,9 +168,7 @@ return {
             vim.keymap.set('n', '<leader>k', builtin.git_bcommits, { desc = 'Show git history for an open file' })
 
             vim.keymap.set('n', '<leader>/', function()
-                -- You can pass additional configuration to Telescope to change the theme, layout, etc.
                 builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-                    winblend = 10,
                     previewer = false,
                 })
             end, { desc = '[/] Fuzzily search in current buffer' })
