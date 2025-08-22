@@ -80,13 +80,6 @@ return {
                         maxwidth = 50,
                         ellipsis_char = '...',
                         symbol_map = { Codeium = " ", },
-
-                        before = function(entry, item)
-                            if entry.source.name == "cmp_tabnine" then
-                                item.menu = ""
-                            end
-                            return item
-                        end,
                     })
                 },
                 sources = {
@@ -101,16 +94,6 @@ return {
                         group_index = 1,
                         priority = 100
                     },
-                    {
-                        name = "cmp_tabnine",
-                        group_index = 1,
-                        priority = 100,
-                    }
-                },
-                experimental = {
-                    ghost_text = {
-                        hl_group = "CmpGhostText",
-                    }
                 },
             }
         end,
