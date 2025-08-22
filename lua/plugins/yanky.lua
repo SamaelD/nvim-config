@@ -1,16 +1,13 @@
 return {
     "gbprod/yanky.nvim",
     opts = {
-        highlight = { timer = 150 },
-    },
-    keys = {
-        {
-            "<leader>p",
-            function()
-                require("telescope").extensions.yank_history.yank_history({})
-            end,
-            mode = { "n", "x" },
-            desc = "Open Yank History",
+        highlight = {
+            on_put = true,
+            on_yank = true,
+            timer = 100,
         },
-    }
+        system_clipboard = {
+            sync_with_ring = true,
+        },
+    },
 }
