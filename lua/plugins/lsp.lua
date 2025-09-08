@@ -6,8 +6,9 @@ return {
             "williamboman/mason-lspconfig.nvim",
             "WhoIsSethDaniel/mason-tool-installer.nvim",
             { "j-hui/fidget.nvim",       opts = {} },
-            { "folke/neodev.nvim",       opts = {} },
+            -- { "folke/neodev.nvim",       opts = {} },
             "hrsh7th/nvim-cmp",
+            "Saghen/blink.cmp",
         },
         config = function()
             vim.api.nvim_create_autocmd("LspAttach", {
@@ -33,46 +34,41 @@ return {
                     map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 
                     local client = vim.lsp.get_client_by_id(event.data.client_id)
-                    if client and client.server_capabilities.documentHighlightProvider then
-                        local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
-                        vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-                            buffer = event.buf,
-                            group = highlight_augroup,
-                            callback = vim.lsp.buf.document_highlight,
-                        })
+                    if client then
+                        if client.server_capabilities.documentHighlightProvider then
+                            local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
+                            vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+                                buffer = event.buf,
+                                group = highlight_augroup,
+                                callback = vim.lsp.buf.document_highlight,
+                            })
 
-                        vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-                            buffer = event.buf,
-                            group = highlight_augroup,
-                            callback = vim.lsp.buf.clear_references,
-                        })
+                            vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+                                buffer = event.buf,
+                                group = highlight_augroup,
+                                callback = vim.lsp.buf.clear_references,
+                            })
 
-                        vim.api.nvim_create_autocmd("LspDetach", {
-                            group = vim.api.nvim_create_augroup("lsp-detach", { clear = true }),
-                            callback = function(event2)
-                                vim.lsp.buf.clear_references()
-                                vim.api.nvim_clear_autocmds({ group = "lsp-highlight", buffer = event2.buf })
-                            end,
-                        })
-                    end
+                            vim.api.nvim_create_autocmd("LspDetach", {
+                                group = vim.api.nvim_create_augroup("lsp-detach", { clear = true }),
+                                callback = function(event2)
+                                    vim.lsp.buf.clear_references()
+                                    vim.api.nvim_clear_autocmds({ group = "lsp-highlight", buffer = event2.buf })
+                                end,
+                            })
+                        end
 
-                    if client and client.server_capabilities.inlayHintProvider then
-                        vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-                    end
-
-                    if client and client.name == "clangd" then
-                        map("<leader>hs", "<cmd>ClangdSwitchSourceHeader<cr>", "[H]eader/[S]ource switch")
-                    end
-
-                    if client.name == 'ruff' then
-                        -- Disable hover in favor of Pyright
-                        client.server_capabilities.hoverProvider = false
+                        if client.server_capabilities.inlayHintProvider then
+                            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+                        end
                     end
                 end,
             })
 
             local capabilities = vim.lsp.protocol.make_client_capabilities()
-            capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+            -- capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+            capabilities = vim.tbl_deep_extend("force", capabilities,
+                require('blink.cmp').get_lsp_capabilities(capabilities))
 
             local servers = {
                 clangd = {
@@ -89,8 +85,30 @@ return {
                     root_dir = function()
                         vim.fn.getcwd()
                     end,
+                    on_attach = function(client, bufnr)
+                        vim.map.set("n", "<leader>hs", "<cmd>ClangdSwitchSourceHeader<cr>",
+                            { buffer = bufnr, desc = "LSP: Switch source header" })
+                    end
                 },
-                pyright = {},
+                pyright = {
+                    settings = {
+                        pyright = {
+                            disableOrganizeImports = true,
+                        },
+                        python = {
+                            analysis = {
+                                typeCheckingMode = "off",
+                                diagnosticMode = "openFilesOnly",
+                                autoSearchPaths = true,
+                                useLibraryCodeForTypes = true,
+                            },
+                        },
+                    },
+                    handlers = {
+                        -- Disable diagnostics in favor of ruff
+                        ["textDocument/publishDiagnostics"] = function() end,
+                    },
+                },
                 rust_analyzer = {},
                 cmake = {},
                 kotlin_language_server = {},
@@ -104,6 +122,13 @@ return {
                             diagnostics = { disable = { "missing-fields" } },
                         },
                     },
+                },
+                qmlls = {},
+                ruff = {
+                    on_attach = function(client, bufnr)
+                        -- Disable hover in favor of Pyright
+                        client.server_capabilities.hoverProvider = false
+                    end
                 },
             }
 
@@ -122,20 +147,6 @@ return {
                         server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
                         require("lspconfig")[server_name].setup(server)
                     end,
-                },
-            })
-            require("lspconfig").qmlls.setup({})
-            require("lspconfig").ruff.setup({
-                settings = {
-                    pyright = {
-                        disableOrganizeImports = true,
-                    },
-                    python = {
-                        analysis = {
-                            -- Ignore all files for analysis to exclusively use Ruff for linting
-                            ignore = { '*' },
-                        },
-                    },
                 },
             })
         end,

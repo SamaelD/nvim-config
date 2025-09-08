@@ -17,6 +17,7 @@ return {
                 auto_integrations = true,
                 integrations = {
                     cmp = true,
+                    blink_cmp = true,
                     gitsigns = true,
                     neotree = true,
                     treesitter = true,

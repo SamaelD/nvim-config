@@ -31,7 +31,7 @@ return {
             formatters_by_ft = {
                 -- cpp = { 'cpp_format' },
                 c = { "clang_format" },
-                python = { "pyink" },
+                python = { "black" },
             },
             formatters = {
                 cpp_format = {
