@@ -134,15 +134,18 @@ local function headers()
         ]]
 
     return {
-        header1, header2, header3, header4
+        header1,
+        header2,
+        header3,
+        header4,
     }
 end
 
 local function get_header()
-    local _headers = headers();
+    local _headers = headers()
 
     local math = require("math")
-    math.randomseed(os.time());
+    math.randomseed(os.time())
     local number = math.random(1, #_headers)
     return _headers[number]
 end
@@ -192,11 +195,11 @@ return {
             notifier = {
                 enabled = true,
                 timeout = 3000,
-                style = "fancy"
+                style = "fancy",
             },
             quickfile = { enabled = true },
             scope = { enabled = true },
-            scroll = { enabled = true },
+            scroll = { enabled = false },
             statuscolumn = { enabled = true },
             toggle = { enabled = true },
         },
@@ -209,39 +212,41 @@ return {
                 routes = {
                     {
                         filter = {
-                            event = 'msg_show',
+                            event = "msg_show",
                             any = {
-                                { find = '%d+L, %d+B' },
-                                { find = '; after #%d+' },
-                                { find = '; before #%d+' },
-                                { find = '%d fewer lines' },
-                                { find = '%d more lines' },
+                                { find = "%d+L, %d+B" },
+                                { find = "; after #%d+" },
+                                { find = "; before #%d+" },
+                                { find = "%d fewer lines" },
+                                { find = "%d more lines" },
                             },
                         },
                         opts = { skip = true },
-                    }
+                    },
                 },
             })
         end,
         dependencies = {
             "MunifTanjim/nui.nvim",
             "rcarriga/nvim-notify",
-        }
+        },
     },
     {
         "folke/todo-comments.nvim",
         keys = {
             {
                 "<leader>st",
-                function() Snacks.picker.todo_comments() end,
-                desc = "Todo"
+                function()
+                    Snacks.picker.todo_comments()
+                end,
+                desc = "Todo",
             },
             {
                 "<leader>sT",
                 function()
                     Snacks.picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME" } })
                 end,
-                desc = "Todo/Fix/Fixme"
+                desc = "Todo/Fix/Fixme",
             },
         },
         opts = {
@@ -284,5 +289,5 @@ return {
                 })
             end,
         },
-    }
+    },
 }
