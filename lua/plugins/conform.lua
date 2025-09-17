@@ -17,12 +17,26 @@ local function webkit_format_args()
     end
 
     return {
-        "--style={BasedOnStyle: webkit, IndentWidth: 4, "
-            .. "AlignAfterOpenBracket: AlwaysBreak, AllowShortFunctionsOnASingleLine: None, "
-            .. "AlwaysBreakTemplateDeclarations: Yes, BinPackArguments: false, "
-            .. "BinPackParameters: false, ColumnLimit: 100, FixNamespaceComments: true, "
-            .. "Cpp11BracedListStyle: true, NamespaceIndentation: None, "
-            .. "SpaceAfterTemplateKeyword: false, SpaceBeforeCpp11BracedList: false}",
+        "--style={BasedOnStyle: WebKit, "
+            .. "AlignAfterOpenBracket: AlwaysBreak, "
+            .. "AllowShortFunctionsOnASingleLine: None, "
+            .. "AlwaysBreakTemplateDeclarations: Yes, "
+            .. "BinPackArguments: false, "
+            .. "BinPackParameters: false, "
+            .. "ColumnLimit: 100, "
+            .. "FixNamespaceComments: true, "
+            .. "IncludeBlocks: Regroup, "
+            .. "IncludeCategories: ["
+            .. "{Regex: '^\".+\\.(h|hh|hpp|hxx)\"$', Priority: 1}, "
+            .. "{Regex: '^<.+\\.(h|hh|hpp|hxx)>$', Priority: 2}, "
+            .. "{Regex: '^<[^.]+>$', Priority: 3}"
+            .. "], "
+            .. 'IncludeIsMainRegex: "(_unittest)?$", '
+            .. "Cpp11BracedListStyle: true, "
+            .. "NamespaceIndentation: None, "
+            .. "SpaceAfterTemplateKeyword: false, "
+            .. "SpaceBeforeCpp11BracedList: false, "
+            .. "PenaltyReturnTypeOnItsOwnLine: 999}",
     }
 end
 
@@ -32,12 +46,26 @@ local function llvm_format_args()
     end
 
     return {
-        "--style={BasedOnStyle: llvm, IndentWidth: 4, "
-            .. "AlignAfterOpenBracket: AlwaysBreak, AllowShortFunctionsOnASingleLine: None, "
-            .. "AlwaysBreakTemplateDeclarations: Yes, BinPackArguments: false, "
-            .. "BinPackParameters: false, ColumnLimit: 100, FixNamespaceComments: true, "
-            .. "Cpp11BracedListStyle: true, NamespaceIndentation: None, "
-            .. "SpaceAfterTemplateKeyword: false, SpaceBeforeCpp11BracedList: false}",
+        "--style={BasedOnStyle: LLVM, "
+            .. "AlignAfterOpenBracket: AlwaysBreak, "
+            .. "AllowShortFunctionsOnASingleLine: None, "
+            .. "AlwaysBreakTemplateDeclarations: Yes, "
+            .. "BinPackArguments: false, "
+            .. "BinPackParameters: false, "
+            .. "ColumnLimit: 100, "
+            .. "FixNamespaceComments: true, "
+            .. "IncludeBlocks: Regroup, "
+            .. "IncludeCategories: ["
+            .. "{Regex: '^\".+\\.(h|hh|hpp|hxx)\"$', Priority: 1}, "
+            .. "{Regex: '^<.+\\.(h|hh|hpp|hxx)>$', Priority: 2}, "
+            .. "{Regex: '^<[^.]+>$', Priority: 3}"
+            .. "], "
+            .. 'IncludeIsMainRegex: "(_unittest)?$", '
+            .. "Cpp11BracedListStyle: true, "
+            .. "NamespaceIndentation: None, "
+            .. "SpaceAfterTemplateKeyword: false, "
+            .. "SpaceBeforeCpp11BracedList: false, "
+            .. "PenaltyReturnTypeOnItsOwnLine: 999}",
     }
 end
 
@@ -63,8 +91,8 @@ return {
                     lsp_format = "fallback",
                 },
                 formatters_by_ft = {
-                    cpp = { "cpp_format" },
-                    c = { "c_format" },
+                    cpp = { "cpp-format" },
+                    c = { "c-format" },
                     python = { "isort", "black" },
                     lua = { "stylua" },
                 },
