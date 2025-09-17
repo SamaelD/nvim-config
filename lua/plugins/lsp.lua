@@ -5,7 +5,7 @@ return {
             { "williamboman/mason.nvim", config = true },
             "williamboman/mason-lspconfig.nvim",
             "WhoIsSethDaniel/mason-tool-installer.nvim",
-            { "j-hui/fidget.nvim",       opts = {} },
+            { "j-hui/fidget.nvim", opts = {} },
             -- { "folke/neodev.nvim",       opts = {} },
             "hrsh7th/nvim-cmp",
             "Saghen/blink.cmp",
@@ -61,14 +61,17 @@ return {
                         if client.server_capabilities.inlayHintProvider then
                             vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
                         end
+
+                        if client.name == "clangd" then
+                            map("<leader>hs", "<cmd>LspClangdSwitchSourceHeader<cr>", "[H]eader/[S]ource switch")
+                        end
                     end
                 end,
             })
 
             local capabilities = vim.lsp.protocol.make_client_capabilities()
-            -- capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
-            capabilities = vim.tbl_deep_extend("force", capabilities,
-                require('blink.cmp').get_lsp_capabilities(capabilities))
+            capabilities =
+                vim.tbl_deep_extend("force", capabilities, require("blink.cmp").get_lsp_capabilities(capabilities))
 
             local servers = {
                 clangd = {
@@ -83,12 +86,8 @@ return {
                     },
                     single_file_support = true,
                     root_dir = function()
-                        vim.fn.getcwd()
+                        return vim.fn.getcwd()
                     end,
-                    on_attach = function(client, bufnr)
-                        vim.map.set("n", "<leader>hs", "<cmd>ClangdSwitchSourceHeader<cr>",
-                            { buffer = bufnr, desc = "LSP: Switch source header" })
-                    end
                 },
                 pyright = {
                     settings = {
@@ -119,7 +118,10 @@ return {
                             completion = {
                                 callSnippet = "Replace",
                             },
-                            diagnostics = { disable = { "missing-fields" } },
+                            diagnostics = {
+                                globals = { "vim" },
+                                disable = { "missing-fields" },
+                            },
                         },
                     },
                 },
@@ -128,7 +130,7 @@ return {
                     on_attach = function(client, bufnr)
                         -- Disable hover in favor of Pyright
                         client.server_capabilities.hoverProvider = false
-                    end
+                    end,
                 },
             }
 
@@ -151,7 +153,7 @@ return {
             })
         end,
     },
-    { "nvimtools/none-ls.nvim",     lazy = true },
+    { "nvimtools/none-ls.nvim", lazy = true },
     { "jay-babu/mason-null-ls.nvim" },
     { "onsails/lspkind.nvim" },
 }
