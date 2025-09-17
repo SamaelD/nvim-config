@@ -7,7 +7,7 @@ return {
             require("catppuccin").setup({
                 flavour = "mocha",
                 transparent_background = true,
-                styles = {                   -- Handles the styles of general hi groups (see `:h highlight-args`):
+                styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
                     comments = { "italic" }, -- Change the style of comments
                 },
                 float = {
@@ -25,14 +25,15 @@ return {
                     notify = true,
                     noice = true,
                     telescope = {
-                        enabled = true
+                        enabled = true,
                     },
                     lsp_trouble = true,
+                    bufferline = true,
 
                     dashboard = true,
                     snacks = {
                         enabled = true,
-                        indent_scope_color = "lavender"
+                        indent_scope_color = "lavender",
                     },
                     flash = true,
                     fzf = true,
@@ -58,10 +59,10 @@ return {
                             background = true,
                         },
                     },
-                }
+                },
             })
 
-            vim.cmd.colorscheme "catppuccin"
+            vim.cmd.colorscheme("catppuccin")
         end,
-    }
+    },
 }
