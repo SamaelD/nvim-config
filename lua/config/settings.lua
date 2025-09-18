@@ -1,4 +1,5 @@
 vim.g.mapleader = " "
+vim.g.formatting_enabled = true
 
 vim.opt.number = true
 vim.opt.relativenumber = true

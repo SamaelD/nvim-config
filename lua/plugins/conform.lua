@@ -3,6 +3,7 @@ local function find_clang_format_up(path)
     local max_depth = 5
     while path ~= "/" and depth < max_depth do
         if vim.fn.filereadable(path .. "/.clang-format") == 1 then
+            vim.notify("clang-format found in " .. path .. "/.clang-format")
             return true
         end
         path = vim.fn.fnamemodify(path, ":h")
@@ -23,6 +24,7 @@ local function webkit_format_args()
             .. "AlwaysBreakTemplateDeclarations: Yes, "
             .. "BinPackArguments: false, "
             .. "BinPackParameters: false, "
+            .. "IndentWidth: 4, "
             .. "ColumnLimit: 100, "
             .. "FixNamespaceComments: true, "
             .. "IncludeBlocks: Regroup, "
@@ -46,12 +48,13 @@ local function llvm_format_args()
     end
 
     return {
-        "--style={BasedOnStyle: LLVM, "
+        "--style={BasedOnStyle: llvm, "
             .. "AlignAfterOpenBracket: AlwaysBreak, "
             .. "AllowShortFunctionsOnASingleLine: None, "
             .. "AlwaysBreakTemplateDeclarations: Yes, "
             .. "BinPackArguments: false, "
             .. "BinPackParameters: false, "
+            .. "IndentWidth: 4, "
             .. "ColumnLimit: 100, "
             .. "FixNamespaceComments: true, "
             .. "IncludeBlocks: Regroup, "
@@ -82,17 +85,28 @@ return {
                 mode = "",
                 desc = "[F]ormat buffer",
             },
+            {
+                "<leader>tf",
+                function()
+                    vim.g.formatting_enabled = not vim.g.formatting_enabled
+                    vim.notify("Formatting " .. (vim.g.formatting_enabled and "enabled" or "disabled"))
+                end,
+                mode = "",
+                desc = "[T]oggle [F]ormatting",
+            },
         },
         config = function()
             require("conform").setup({
                 notify_on_error = true,
-                format_on_save = {
-                    timeout_ms = 500,
-                    lsp_format = "fallback",
-                },
+                format_on_save = function()
+                    if not vim.g.formatting_enabled then
+                        return
+                    end
+                    return { timeout_ms = 500, lsp_format = "fallback" }
+                end,
                 formatters_by_ft = {
-                    cpp = { "cpp-format" },
-                    c = { "c-format" },
+                    cpp = { "cpp_format" },
+                    c = { "c_format" },
                     python = { "isort", "black" },
                     lua = { "stylua" },
                 },

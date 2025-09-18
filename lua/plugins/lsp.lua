@@ -75,7 +75,7 @@ return {
 
             local servers = {
                 clangd = {
-                    filetypes = { "h", "hpp", "cpp", "c", "cc", "cppm" },
+                    filetypes = { "h", "hpp", "inc", "cpp", "c", "cc", "cppm" },
                     cmd = {
                         "clangd",
                         "--clang-tidy",
