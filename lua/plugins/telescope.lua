@@ -1,6 +1,6 @@
-local previewers = require('telescope.previewers')
+local previewers = require("telescope.previewers")
 local conf = require("telescope.config").values
-local utils = require('telescope.previewers.utils')
+local utils = require("telescope.previewers.utils")
 
 local function defaulter(f, default_opts)
     default_opts = default_opts or {}
@@ -39,9 +39,9 @@ local function search_cb_jump(self, bufnr, query)
     end
     vim.api.nvim_buf_call(bufnr, function()
         pcall(vim.fn.matchdelete, self.state.hl_id, self.state.winid)
-        vim.cmd "keepjumps norm! gg"
+        vim.cmd("keepjumps norm! gg")
         vim.fn.search(query, "W")
-        vim.cmd "norm! zz"
+        vim.cmd("norm! zz")
 
         self.state.hl_id = vim.fn.matchadd("TelescopePreviewMatch", query)
     end)
@@ -57,10 +57,9 @@ local diff_to_parent_previewer = defaulter(function(opts)
         end,
 
         define_preview = function(self, entry, status)
-            local cmd = { 'git', 'show', '--stat', '--patch', '--pretty=fuller',
-                entry.value .. "^!" }
+            local cmd = { "git", "show", "--stat", "--patch", "--pretty=fuller", entry.value .. "^!" }
             if opts.current_file then
-                table.insert(cmd, '--')
+                table.insert(cmd, "--")
                 table.insert(cmd, opts.current_file)
             end
 
@@ -73,9 +72,9 @@ local diff_to_parent_previewer = defaulter(function(opts)
                         search_cb_jump(self, bufnr, opts.current_file)
                         utils.highlighter(bufnr, "diff", opts)
                     end
-                end
+                end,
             })
-        end
+        end,
     })
 end)
 
@@ -87,23 +86,24 @@ return {
             "nvim-telescope/telescope-fzf-native.nvim",
             "nvim-telescope/telescope-ui-select.nvim",
             "nvim-telescope/telescope-live-grep-args.nvim",
+            "j-hui/fidget.nvim",
         },
         event = "VimEnter",
         config = function()
-            require('telescope').setup {
+            require("telescope").setup({
                 defaults = {
                     file_ignore_patterns = {
-                        '.git/'
+                        ".git/",
                     },
-                    layout_strategy = 'flex',
-                    sorting_strategy = 'ascending',
+                    layout_strategy = "flex",
+                    sorting_strategy = "ascending",
                     layout_config = {
-                        prompt_position = 'top',
+                        prompt_position = "top",
                     },
                 },
                 extensions = {
-                    ['ui-select'] = {
-                        require('telescope.themes').get_dropdown(),
+                    ["ui-select"] = {
+                        require("telescope.themes").get_dropdown(),
                     },
                     live_grep_args = {
                         auto_quoting = true,
@@ -112,7 +112,7 @@ return {
                         fuzzy = true,
                         override_generic_sorter = true,
                         override_file_sorter = true,
-                        case_mode = 'smart_case',
+                        case_mode = "smart_case",
                     },
                 },
                 pickers = {
@@ -133,56 +133,63 @@ return {
                         ["q"] = require("telescope.actions").close,
                     },
                 },
-            }
+            })
 
             previewers.git_commit_diff_to_parent = diff_to_parent_previewer
 
-            pcall(require('telescope').load_extension, 'fzf')
-            pcall(require('telescope').load_extension, 'ui-select')
-            pcall(require('telescope').load_extension, 'live_grep_args')
+            pcall(require("telescope").load_extension, "fzf")
+            pcall(require("telescope").load_extension, "ui-select")
+            pcall(require("telescope").load_extension, "live_grep_args")
+            pcall(require("telescope").load_extension("fidget"))
 
             -- See `:help telescope.builtin`
-            local builtin = require 'telescope.builtin'
-            vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-            vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-            vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-            vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-            vim.keymap.set('n', '<leader>sw', require("telescope-live-grep-args.shortcuts").grep_word_under_cursor,
-                { desc = '[S]earch current [W]ord' })
-            vim.keymap.set('n', '<leader>sg', ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>",
-                { desc = '[S]earch by [G]rep' })
-            vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-            vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-            vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-            vim.keymap.set('n', '<leader>su', builtin.lsp_references, { desc = '[S]earch [U]sage (references)' })
-            vim.keymap.set('n', '<leader><leader>',
-                function()
-                    builtin.buffers({
-                        sort_mru = true,
-                        sort_lastused = true,
-                        initial_mode = 'normal',
-                    })
-                end,
-                { desc = '[ ] Find existing buffers' })
-            vim.keymap.set('n', '<leader>tk', builtin.git_commits, { desc = 'Show git history' })
-            vim.keymap.set('n', '<leader>k', builtin.git_bcommits, { desc = 'Show git history for an open file' })
-
-            vim.keymap.set('n', '<leader>/', function()
-                builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-                    previewer = false,
+            local builtin = require("telescope.builtin")
+            vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
+            vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
+            vim.keymap.set("n", "<leader>sf", builtin.find_files, { desc = "[S]earch [F]iles" })
+            vim.keymap.set("n", "<leader>ss", builtin.builtin, { desc = "[S]earch [S]elect Telescope" })
+            vim.keymap.set(
+                "n",
+                "<leader>sw",
+                require("telescope-live-grep-args.shortcuts").grep_word_under_cursor,
+                { desc = "[S]earch current [W]ord" }
+            )
+            vim.keymap.set(
+                "n",
+                "<leader>sg",
+                ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>",
+                { desc = "[S]earch by [G]rep" }
+            )
+            vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
+            vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "[S]earch [R]esume" })
+            vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+            vim.keymap.set("n", "<leader>su", builtin.lsp_references, { desc = "[S]earch [U]sage (references)" })
+            vim.keymap.set("n", "<leader><leader>", function()
+                builtin.buffers({
+                    sort_mru = true,
+                    sort_lastused = true,
+                    initial_mode = "normal",
                 })
-            end, { desc = '[/] Fuzzily search in current buffer' })
+            end, { desc = "[ ] Find existing buffers" })
+            vim.keymap.set("n", "<leader>tk", builtin.git_commits, { desc = "Show git history" })
+            vim.keymap.set("n", "<leader>k", builtin.git_bcommits, { desc = "Show git history for an open file" })
 
-            vim.keymap.set('n', '<leader>s/', function()
-                builtin.live_grep {
+            vim.keymap.set("n", "<leader>/", function()
+                builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
+                    previewer = false,
+                }))
+            end, { desc = "[/] Fuzzily search in current buffer" })
+
+            vim.keymap.set("n", "<leader>s/", function()
+                builtin.live_grep({
                     grep_open_files = true,
-                    prompt_title = 'Live Grep in Open Files',
-                }
-            end, { desc = '[S]earch [/] in Open Files' })
+                    prompt_title = "Live Grep in Open Files",
+                })
+            end, { desc = "[S]earch [/] in Open Files" })
 
-            vim.keymap.set('n', '<leader>sn', function()
-                builtin.find_files { cwd = vim.fn.stdpath 'config' }
-            end, { desc = '[S]earch [N]eovim files' })
+            vim.keymap.set("n", "<leader>sn", function()
+                builtin.find_files({ cwd = vim.fn.stdpath("config") })
+            end, { desc = "[S]earch [N]eovim files" })
         end,
     },
 }

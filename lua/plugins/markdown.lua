@@ -1,6 +1,6 @@
 return {
     {
-        'MeanderingProgrammer/render-markdown.nvim',
+        "MeanderingProgrammer/render-markdown.nvim",
         opts = {
             file_types = { "markdown", "Avante" },
         },
@@ -10,7 +10,10 @@ return {
     {
         "iamcco/markdown-preview.nvim",
         cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+        build = "cd app && bash install.sh",
+        init = function()
+            vim.g.mkdp_filetypes = { "markdown" }
+        end,
         ft = { "markdown" },
-        build = "cd app && yarn install",
-    }
+    },
 }

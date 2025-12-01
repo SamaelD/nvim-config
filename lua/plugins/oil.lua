@@ -1,6 +1,6 @@
 return {
     {
-        'stevearc/oil.nvim',
+        "stevearc/oil.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons" },
         config = function()
             require("oil").setup({
@@ -14,6 +14,7 @@ return {
                 },
                 win_options = {
                     wrap = false,
+                    signcolumn = "yes:2",
                 },
                 watch_for_changes = true,
                 use_default_keymaps = false,
@@ -37,5 +38,21 @@ return {
 
             vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
         end,
-    }
+    },
+    {
+        "refractalize/oil-git-status.nvim",
+        dependencies = {
+            "stevearc/oil.nvim",
+        },
+        config = true,
+    },
+    {
+        "benomahony/oil-git.nvim",
+        dependencies = { "stevearc/oil.nvim" },
+    },
+    {
+        "JezerM/oil-lsp-diagnostics.nvim",
+        dependencies = { "stevearc/oil.nvim" },
+        opts = {},
+    },
 }
