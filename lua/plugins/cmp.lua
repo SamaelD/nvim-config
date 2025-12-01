@@ -17,8 +17,8 @@ return {
         },
     },
     {
-        'saghen/blink.compat',
-        version = '2.*',
+        "saghen/blink.compat",
+        version = "2.*",
         lazy = true,
         opts = {},
     },
@@ -29,7 +29,6 @@ return {
             "rafamadriz/friendly-snippets",
             "saghen/blink.compat",
             "Exafunction/windsurf.nvim",
-
         },
         event = { "InsertEnter", "CmdlineEnter" },
         opts = {
@@ -53,7 +52,7 @@ return {
                     },
                 },
                 menu = {
-                    border = 'rounded',
+                    border = "rounded",
                     draw = {
                         treesitter = { "lsp" },
                         columns = { { "kind_icon" }, { "label", gap = 1 } },
@@ -100,17 +99,24 @@ return {
                 enabled = true,
             },
         },
-
         config = function(_, opts)
-            local enabled = opts.sources.default
+            local disabled_fts = { "oil" }
+
+            local function ft_allowed()
+                return not vim.tbl_contains(disabled_fts, vim.bo.filetype)
+            end
+
             for _, source in ipairs(opts.sources.compat or {}) do
-                opts.sources.providers[source] = vim.tbl_deep_extend(
-                    "force",
-                    { name = source, module = "blink.compat.source" },
-                    opts.sources.providers[source] or {}
-                )
-                if type(enabled) == "table" and not vim.tbl_contains(enabled, source) then
-                    table.insert(enabled, source)
+                opts.sources.providers[source] = vim.tbl_deep_extend("force", {
+                    name = source,
+                    module = "blink.compat.source",
+                    enabled = function()
+                        return ft_allowed()
+                    end,
+                }, opts.sources.providers[source] or {})
+
+                if type(opts.sources.default) == "table" and not vim.tbl_contains(opts.sources.default, source) then
+                    table.insert(opts.sources.default, source)
                 end
             end
 
@@ -124,12 +130,16 @@ return {
                             end)
                         elseif require("codeium.virtual_text").get_current_completion_item() then
                             if vim.api.nvim_get_mode().mode == "i" then
+                                vim.notify("codeium active c")
                                 local undo = vim.api.nvim_replace_termcodes("<c-G>u", true, true, true)
                                 vim.api.nvim_feedkeys(undo, "n", false)
                             end
                             vim.api.nvim_input(require("codeium.virtual_text").accept())
                         elseif type(fallback) == "function" then
                             fallback()
+                        else
+                            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, true, true), "n", true)
+                            -- return "fallback"
                         end
                     end,
                 }

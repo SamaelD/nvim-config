@@ -102,7 +102,7 @@ return {
                     if not vim.g.formatting_enabled then
                         return
                     end
-                    return { timeout_ms = 500, lsp_format = "fallback" }
+                    return { timeout_ms = 1000, lsp_format = "fallback" }
                 end,
                 formatters_by_ft = {
                     cpp = { "cpp_format" },
@@ -113,7 +113,7 @@ return {
                 formatters = {
                     cpp_format = {
                         command = "clang-format",
-                        args = llvm_format_args(),
+                        args = webkit_format_args(),
                     },
                     c_format = {
                         command = "clang-format",

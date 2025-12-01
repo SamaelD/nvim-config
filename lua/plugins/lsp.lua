@@ -83,11 +83,15 @@ return {
                         "--completion-style=detailed",
                         "--header-insertion=iwyu",
                         "--enable-config",
+                        "--pch-storage=memory",
+                        "--cross-file-rename=true",
+                        "--suggest-missing-includes",
                     },
                     single_file_support = true,
-                    root_dir = function()
-                        return vim.fn.getcwd()
-                    end,
+                    -- root_dir = function()
+                    --     return vim.fn.getcwd()
+                    -- end,
+                    root_dir = require("lspconfig.util").root_pattern("compile_commands.json", ".clangd", ".git"),
                 },
                 pyright = {
                     settings = {
@@ -135,6 +139,7 @@ return {
             }
 
             require("mason").setup()
+            require("lspconfig").qmlls.setup({})
 
             local ensure_installed = vim.tbl_keys(servers or {})
             vim.list_extend(ensure_installed, {
