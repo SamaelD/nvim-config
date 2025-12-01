@@ -79,7 +79,6 @@ return {
             },
             sources = {
                 default = { "lazydev", "lsp", "path", "snippets", "buffer", "codeium" },
-
                 providers = {
                     codeium = {
                         name = "codeium",
