@@ -1,81 +1,85 @@
+local function capabilities()
+    local caps = vim.lsp.protocol.make_client_capabilities()
+    caps = vim.tbl_deep_extend("force", caps, require("blink.cmp").get_lsp_capabilities(caps))
+    return caps
+end
+
+local function qmlls_binary()
+    local venv = vim.fn.getcwd() .. "/.venv"
+    local lib = venv .. "/lib"
+    local python = vim.fn.glob(lib .. "/python*")
+    local site_packages = python .. "/site-packages"
+    local pyside_qmlls = site_packages .. "/PySide6/qmlls"
+    if vim.fn.executable(pyside_qmlls) == 1 then
+        vim.notify("qmlls found in " .. pyside_qmlls)
+        return { pyside_qmlls }
+    end
+    return { "qmlls" }
+end
+
 return {
+    {
+        "p00f/clangd_extensions.nvim",
+        lazy = true,
+        config = function() end,
+    },
     {
         "neovim/nvim-lspconfig",
         dependencies = {
-            { "williamboman/mason.nvim", config = true },
-            "williamboman/mason-lspconfig.nvim",
-            "WhoIsSethDaniel/mason-tool-installer.nvim",
-            { "j-hui/fidget.nvim" },
-            -- { "folke/neodev.nvim",       opts = {} },
-            "hrsh7th/nvim-cmp",
+            { "mason-org/mason.nvim", opts = {} },
+            "mason-org/mason-lspconfig.nvim",
             "Saghen/blink.cmp",
+            "benomahony/uv.nvim",
         },
-        config = function()
-            vim.api.nvim_create_autocmd("LspAttach", {
-                group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
-                callback = function(event)
-                    local map = function(keys, func, desc)
-                        vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
-                    end
-
-                    map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
-                    map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
-                    map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
-                    map("<leader>D", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
-                    map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
-                    map(
-                        "<leader>ws",
-                        require("telescope.builtin").lsp_dynamic_workspace_symbols,
-                        "[W]orkspace [S]ymbols"
-                    )
-                    map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-                    map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-                    map("<leader>hd", vim.lsp.buf.hover, "[H]over [D]ocumentation")
-                    map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
-
-                    local client = vim.lsp.get_client_by_id(event.data.client_id)
-                    if client then
-                        if client.server_capabilities.documentHighlightProvider then
-                            local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
-                            vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-                                buffer = event.buf,
-                                group = highlight_augroup,
-                                callback = vim.lsp.buf.document_highlight,
-                            })
-
-                            vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-                                buffer = event.buf,
-                                group = highlight_augroup,
-                                callback = vim.lsp.buf.clear_references,
-                            })
-
-                            vim.api.nvim_create_autocmd("LspDetach", {
-                                group = vim.api.nvim_create_augroup("lsp-detach", { clear = true }),
-                                callback = function(event2)
-                                    vim.lsp.buf.clear_references()
-                                    vim.api.nvim_clear_autocmds({ group = "lsp-highlight", buffer = event2.buf })
-                                end,
-                            })
-                        end
-
-                        if client.server_capabilities.inlayHintProvider then
-                            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-                        end
-
-                        if client.name == "clangd" then
-                            map("<leader>hs", "<cmd>LspClangdSwitchSourceHeader<cr>", "[H]eader/[S]ource switch")
-                        end
-                    end
-                end,
-            })
-
-            local capabilities = vim.lsp.protocol.make_client_capabilities()
-            capabilities =
-                vim.tbl_deep_extend("force", capabilities, require("blink.cmp").get_lsp_capabilities(capabilities))
-
-            local servers = {
+        opts = {
+            servers = {
+                ["*"] = {
+                    capabilities = capabilities(),
+                    -- stylua: ignore
+                    keys = {
+                        { "<leader>cl", function() Snacks.picker.lsp_config() end, desc = "Lsp Info" },
+                        { "gd", vim.lsp.buf.definition, desc = "Goto Definition" },
+                        { "gr", vim.lsp.buf.references, desc = "References", nowait = true },
+                        { "gI", vim.lsp.buf.implementation, desc = "Goto Implementation" },
+                        { "gy", vim.lsp.buf.type_definition, desc = "Goto T[y]pe Definition" },
+                        { "gD", vim.lsp.buf.declaration, desc = "Goto Declaration" },
+                        { "K", function() return vim.lsp.buf.hover() end, desc = "Hover" },
+                        { "gK", function() return vim.lsp.buf.signature_help() end, desc = "Signature Help" },
+                        { "<c-k>", function() return vim.lsp.buf.signature_help() end, mode = "i", desc = "Signature Help" },
+                        { "<leader>ca", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" } },
+                        { "<leader>cc", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" } },
+                        { "<leader>cC", vim.lsp.codelens.refresh, desc = "Refresh & Display Codelens", mode = { "n" } },
+                        { "<leader>cR", function() Snacks.rename.rename_file() end, desc = "Rename File", mode ={"n"} },
+                        { "<leader>cr", vim.lsp.buf.rename, desc = "Rename" },
+                        { "<leader>cA", vim.lsp.buf.code_action, desc = "Source Action" },
+                        { "]]", function() Snacks.words.jump(vim.v.count1) end,
+                        desc = "Next Reference", enabled = function() return Snacks.words.is_enabled() end },
+                        { "[[", function() Snacks.words.jump(-vim.v.count1) end,
+                        desc = "Prev Reference", enabled = function() return Snacks.words.is_enabled() end },
+                        { "<a-n>", function() Snacks.words.jump(vim.v.count1, true) end,
+                        desc = "Next Reference", enabled = function() return Snacks.words.is_enabled() end },
+                        { "<a-p>", function() Snacks.words.jump(-vim.v.count1, true) end, 
+                        desc = "Prev Reference", enabled = function() return Snacks.words.is_enabled() end },
+                    },
+                },
                 clangd = {
                     filetypes = { "h", "hpp", "inc", "cpp", "c", "cc", "cppm" },
+                    root_markers = {
+                        "compile_commands.json",
+                        "compile_flags.txt",
+                        "configure.ac", -- AutoTools
+                        "Makefile",
+                        "configure.ac",
+                        "configure.in",
+                        "config.h.in",
+                        "meson.build",
+                        "meson_options.txt",
+                        "build.ninja",
+                        ".git",
+                    },
+                    capabilities = {
+                        offsetEncoding = { "utf-16" },
+                    },
                     cmd = {
                         "clangd",
                         "--clang-tidy",
@@ -87,11 +91,22 @@ return {
                         "--cross-file-rename=true",
                         "--suggest-missing-includes",
                     },
-                    single_file_support = true,
-                    -- root_dir = function()
-                    --     return vim.fn.getcwd()
-                    -- end,
-                    root_dir = require("lspconfig.util").root_pattern("compile_commands.json", ".clangd", ".git"),
+                    init_options = {
+                        usePlaceholders = true,
+                        completeUnimported = true,
+                        clangdFileStatus = true,
+                    },
+                    on_attach = function(client, bufnr) end,
+                    keys = {
+                        {
+                            "<leader>hs",
+                            "<cmd>ClangdSwitchSourceHeader<cr>",
+                            desc = "[H]eader/[S]ource switch",
+                        },
+                    },
+                    setup = function(_, opts)
+                        require("clangd_extensions").setup(vim.tbl_deep_extend("force", {}, { server = opts }))
+                    end,
                 },
                 pyright = {
                     settings = {
@@ -107,18 +122,39 @@ return {
                             },
                         },
                     },
-                    handlers = {
-                        -- Disable diagnostics in favor of ruff
-                        ["textDocument/publishDiagnostics"] = function() end,
+                },
+                ruff = {
+                    cmd_env = { RUFF_TRACE = "messages" },
+                    init_options = {
+                        settings = {
+                            logLevel = "error",
+                        },
                     },
+                    on_attach = function(client, bufnr)
+                        Snacks.util.lsp.on({ name = "ruff" }, function(_, client)
+                            client.server_capabilities.hoverProvider = false
+                        end)
+                    end,
                 },
                 rust_analyzer = {},
                 cmake = {},
-                kotlin_language_server = {},
-
                 lua_ls = {
                     settings = {
                         Lua = {
+                            workspace = {
+                                checkThirdParty = false,
+                                library = vim.api.nvim_get_runtime_file("", true),
+                                ignoreDir = {
+                                    ".git",
+                                    "node_modules",
+                                    ".venv",
+                                    ".cache",
+                                    "lazy-lock.json",
+                                },
+                            },
+                            codeLens = {
+                                enable = true,
+                            },
                             completion = {
                                 callSnippet = "Replace",
                             },
@@ -129,36 +165,77 @@ return {
                         },
                     },
                 },
-                qmlls = {},
-                ruff = {
-                    on_attach = function(client, bufnr)
-                        -- Disable hover in favor of Pyright
-                        client.server_capabilities.hoverProvider = false
-                    end,
+                stylua = {},
+                qmlls = {
+                    cmd = qmlls_binary(),
+                    -- cmd = {
+                    --     "/home/samael/sendbox/python/signal_viewer/.venv/lib/python3.13/site-packages/PySide6/qmlls",
+                    -- },
+                    filetypes = { "qml", "qmljs" },
+                    root_markers = { ".git", ".qmlls.ini" },
                 },
-            }
-
-            require("mason").setup()
-            require("lspconfig").qmlls.setup({})
-
-            local ensure_installed = vim.tbl_keys(servers or {})
-            vim.list_extend(ensure_installed, {
-                "stylua", -- Used to format Lua code
+            },
+        },
+        config = function(_, opts)
+            vim.api.nvim_create_autocmd("LspAttach", {
+                group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
+                callback = function(event)
+                    local client = vim.lsp.get_client_by_id(event.data.client_id)
+                    if not client then
+                        return
+                    end
+                    local server = opts.servers[client.name]
+                    if type(server.on_attach) == "function" then
+                        server.on_attach(client, event)
+                    end
+                end,
             })
-            require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
+            for server, server_opts in pairs(opts.servers) do
+                if type(server_opts) == "table" and server_opts.keys then
+                    for _, map in ipairs(server_opts.keys) do
+                        vim.keymap.set(map.mode or "n", map[1], map[2], { silent = true, desc = map.desc or "" })
+                    end
+                end
+            end
+
+            Snacks.util.lsp.on({ method = "textDocument/inlayHint" }, function(buffer)
+                vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
+            end)
+
+            Snacks.util.lsp.on({ method = "textDocument/codeLens" }, function(buffer)
+                vim.lsp.codelens.refresh()
+                vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
+                    buffer = buffer,
+                    callback = vim.lsp.codelens.refresh,
+                })
+            end)
+
+            if opts.servers["*"] then
+                vim.lsp.config("*", opts.servers["*"])
+            end
+
+            local configure = function(server)
+                if server == "*" then
+                    return false
+                end
+
+                local sopts = opts.servers[server]
+                if type(sopts.setup) == "function" then
+                    sopts.setup(server, sopts)
+                end
+                vim.lsp.config(server, sopts)
+                vim.lsp.enable(server)
+                return true
+            end
+
+            local install = vim.tbl_filter(configure, vim.tbl_keys(opts.servers))
+
+            require("mason").setup({})
             require("mason-lspconfig").setup({
-                handlers = {
-                    function(server_name)
-                        local server = servers[server_name] or {}
-                        server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-                        require("lspconfig")[server_name].setup(server)
-                    end,
-                },
+                ensure_installed = install,
+                automatic_installation = true,
             })
         end,
     },
-    { "nvimtools/none-ls.nvim", lazy = true },
-    { "jay-babu/mason-null-ls.nvim" },
-    { "onsails/lspkind.nvim" },
 }
